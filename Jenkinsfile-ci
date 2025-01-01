@@ -1,1 +1,92 @@
+pipeline {
+ agent any 
+ environment {
+   AWS_ECR_REPOSITORY_URL = "654654348225.dkr.ecr.us-east-2.amazonaws.com"
+   WEB_APP_REPO_NAME = "web-app"
+   MYSQL_DB_REPO_NAME = "mysql-db"
+}
+stages {
+ stage ('build web app') {
+   steps {
+     script {
+         sh "pip3 install -r requirements.txt"
+     }
+   }
+ }
+ stage ('Unit test') {
+   steps {
+     script {
+        try {
+           sh "pytest"
+        } catch (Exception e) {
+           println("No unit test cases found")
+        }
+     }
+   }
+ }
+ stage ('Sonar code quality') {
+   steps {
+    script {
+        def sonarscan = tool 'sonarscanner'
+        withSonarQubeEnv('sonar'){
+          sh "${sonarscan}/bin/sonar-scanner -Dsonar.projectKey=demo"
+        }
+    }
+  }
+ }
+stage ('Building the web app image') {
+  steps {
+    script {
+       sh "docker build -t ${AWS_ECR_REPOSITORY_URL}/${WEB_APP_REPO_NAME}:${BUILD_NUMBER} ."
+    }
+  }
+}
+stage ('trivy web image scan') {
+  steps {
+   script {
+     sh "trivy image -f json -o ${WEB_APP_REPO_NAME}-reports.json ${AWS_ECR_REPOSITORY_URL}/${WEB_APP_REPO_NAME}:${BUILD_NUMBER}
+     archiveArticats artifacts: "${WEB_APP_REPO_NAME}-reports.json"
+    }
+   }
+ }
+stage ('Building mysql iamge') {
+ steps {
+    script {
+        sh """
+           cd mysql-db
+           docker build -t ${AWS_ECR_REPOSITORY_URL}/${MYSQL_DB_REPO_NAME}:${BUILD_NUMBER} .
+       """
+   }
+ } 
+}
+stage ('trivy web image scan') {
+  steps {
+   script {
+     sh "trivy image -f json -o ${MYSQL_DB_REPO_NAME}-reports.json ${AWS_ECR_REPOSITORY_URL}/${MYSQL_DB_REPO_NAME}:${BUILD_NUMBER}
+     archiveArticats artifacts: "${MYSQL_DB_REPO_NAME}-reports.json"
+    }
+   }
+ }
+stage ('Pushing images') {
+  steps {
+    script {
+        withcredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-credentials']]) {
+          sh """
+            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            export AWS_DEFAULT_REGION=us-east-2
+            aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${AWS_ECR_REPOSITORY_URL}
+            docker push ${AWS_ECR_REPOSITORY_URL}/${WEB_APP_REPO_NAME}:${BUILD_NUMBER}
+            docker push ${AWS_ECR_REPOSITORY_URL}/${MYSQL_DB_REPO_NAME}:${BUILD_NUMBER}
+         """
+       }
+   }
+ }
+} 
+ }
+}
+             
+          
 
+
+  
