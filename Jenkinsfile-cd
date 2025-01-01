@@ -10,7 +10,10 @@ pipeline {
             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
             export AWS_DEFAULT_REGION=us-east-2
             aws eks update-kubeconfig --region us-east-2 --name staging-demo
-            kubeclt apply -f web/
+            kubeclt apply -f web/web-namespace.yml
+            kubeclt apply -f web/we-deployment.yml
+            kubeclt apply -f web/web-service.yml
+            kubeclt apply -f web/web-ingress.yml
          """
        }
      }
@@ -24,7 +27,8 @@ pipeline {
             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
             export AWS_DEFAULT_REGION=us-east-2
             aws eks update-kubeconfig --region us-east-2 --name staging-demo
-            kubeclt apply -f db/
+            kubeclt apply -f db/db-deployment.yml
+            kubeclt apply -f db/db-service.yml
          """
        }
      }
