@@ -7,7 +7,7 @@ spec:
   replicas: 1  # You can scale this if needed
   selector:
     matchLabels:
-      app: sonar
+      app: web
   template:
     metadata:
       labels:
