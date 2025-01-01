@@ -18,6 +18,7 @@ pipeline {
        }
      }
    }
+   }
    stage ('deploying of the mysql') {
     steps {
        script{
@@ -33,6 +34,7 @@ pipeline {
        }
      }
    }
+ }
 }
 }
 
