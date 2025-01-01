@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:v1 # Use the custom MySQL image
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root  # Pass the root password via environment variable
+    ports:
+      - "3306:3306"  # Expose MySQL port on the host
+    volumes:
+      - mysql-data:/var/lib/mysql  # Mount the volume for persistent storage
+    networks:
+      - flask-network
+
+  flaskapi:
+    image: my-app:v1 # Specify your Flask API image
+    container_name: flaskapi
+    environment:
+      db_root_password: root  # Pass the DB root password to Flask
+      db_name: flaskapi  # DB name for Flask
+    ports:
+      - "5000:5000"  # Expose Flask API port on the host
+    networks:
+      - flask-network
+    depends_on:
+      - mysql  # Flask API depends on MySQL to be up first
+
+networks:
+  flask-network:
+    driver: bridge  # Use the default bridge network for communication between containers
+
+volumes:
+  mysql-data:
+    driver: local  # Use the local driver for persistent MySQL data
