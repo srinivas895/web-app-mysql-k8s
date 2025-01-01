@@ -38,9 +38,27 @@ pipeline {
         stage('db deployment') {
             steps {
                 script {
-                    // Placeholder for DB deployment steps
-                    println "Deploying database..."
-                    // You can add logic to deploy the database here if needed
+                  withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-credentials']]) {
+                        sh """
+                            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                            export AWS_DEFAULT_REGION=us-east-2
+                            aws eks update-kubeconfig --region us-east-2 --name staging-demo
+
+                            # Change directory to where Kubernetes manifests are located
+                            cd k8s/db
+                            
+                            # Apply Kubernetes manifests
+                            kubectl apply -f db-namespace.yml
+                            kubectl apply -f db-storage-class.yml
+                            kubectl apply -f db-pv.yml
+                            kubectl apply -f db-pvc.yml
+                            kubectl apply -f db-secrets.yml
+                            kubectl apply f db-deployment.yml
+                            kubectl apply f db-service.yml
+                             
+                        """
+                    }
                 }
             }
         }
