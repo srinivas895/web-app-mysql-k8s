@@ -60,7 +60,7 @@ pipeline {
         stage ('Build mysql docker image') {
             steps {
                 script {
-                    sh "mysql-db/docker build -t ${AWS_ECR_REPOSITORY_URL}/${MYSQL_ECR_REPO_NAME}:${BUILD_NUMBER} .
+                    sh "mysql-db/docker build -t ${AWS_ECR_REPOSITORY_URL}/${MYSQL_ECR_REPO_NAME}:${BUILD_NUMBER} ."
                 }
             }
         }
