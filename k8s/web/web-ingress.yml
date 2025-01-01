@@ -4,7 +4,7 @@ metadata:
   name: my-web-ingress
   namespace: demo
 spec:
-  ingressClassName: exterl-nginx
+  ingressClassName: external-nginx
   rules:
   - http:
       paths:
