@@ -1,0 +1,31 @@
+pipeline {
+  agent any {
+    stages {
+      stage ('Verify deployment details') {
+        steps {
+          script {
+          }
+        }
+      }
+      stage ('Web app deployment') {
+        steps {
+          script {
+            sh """
+              cd k8s/web
+              kubeclt apply -f web-namespace.yml
+              kubeclt apply -f web-namespace.yml
+              kubeclt apply web-deployment.yml
+            """
+          }
+        }
+      }
+      stage ('db deployment') {
+        steps {
+          script {
+            println("empty db deployment")
+          }
+        }
+      }
+    }
+  }
+        
