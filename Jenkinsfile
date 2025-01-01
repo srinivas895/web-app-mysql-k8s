@@ -49,7 +49,7 @@ pipeline {
                         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
                         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                         export AWS_DEFAULT_REGION=us-east-2
-                        aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${AWS_ECR_REPOSITORY_URL}"
+                        aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${AWS_ECR_REPOSITORY_URL}
                         docker push ${AWS_ECR_REPOSITORY_URL}/${WEB_APP_ECR_REPO_NAME}:${BUILD_NUMBER}
                   """
             
