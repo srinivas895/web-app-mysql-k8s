@@ -48,7 +48,7 @@ stage ('trivy web image scan') {
        sh "trivy image -f table -o ${WEB_APP_REPO_NAME}-reports.txt ${AWS_ECR_REPOSITORY_URL}/${WEB_APP_REPO_NAME}:${BUILD_NUMBER}"
        archiveArticats artifacts: "${WEB_APP_REPO_NAME}-reports.txt"
      } cath (Exception e) {
-      println("Failed trivy scan")
+       println("Failed trivy scan")
      }
     }
    }
