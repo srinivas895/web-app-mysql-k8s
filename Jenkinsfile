@@ -64,7 +64,7 @@ pipeline {
                 }
             }
         }
-        stage('Publish web app image into aws ecr') {
+        stage('Publish mysql image into aws ecr') {
             steps {
                 script {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-credentials']]) {
