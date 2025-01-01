@@ -35,10 +35,7 @@ pipeline {
         stage ('Build docker image') {
             steps {
                 script {
-                    def DATE_TAG = new Date()
-                    env.DATE_TAG = "${DATE_TAG}"
-                    println "Current Date and Time: ${env.DATE_TAG}"
-                    sh "docker build -t ${AWS_ECR_REPOSITORY}:${env.DATE_TAG} ."
+                    sh "docker build -t ${AWS_ECR_REPOSITORY}:${BUILD_NUMBER} ."
                 }
             }
         }
@@ -51,7 +48,7 @@ pipeline {
                         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                         export AWS_DEFAULT_REGION=us-east-2
                         aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 654654348225.dkr.ecr.us-east-2.amazonaws.com
-                        docker push ${AWS_ECR_REPOSITORY}:${env.DATE_TAG}
+                        docker push ${AWS_ECR_REPOSITORY}:${BUILD_NUMBER}
                   """
             
                 }
