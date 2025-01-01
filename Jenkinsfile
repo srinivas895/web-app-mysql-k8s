@@ -1,7 +1,9 @@
 pipeline {
     agent any
     environment {
-        AWS_ECR_REPOSITORY = "654654348225.dkr.ecr.us-east-2.amazonaws.com/web-app"
+        AWS_ECR_REPOSITORY_URL = "654654348225.dkr.ecr.us-east-2.amazonaws.com"
+        WEB_APP_ECR_REPO_NAME = 'web-app'
+        MYSQL_ECR_REPO_NAME = "mysql-db"
     }
     stages {
         stage('Install dependencies') {
@@ -32,14 +34,14 @@ pipeline {
                 }
             }
         }
-        stage ('Build docker image') {
+        stage ('Build web app docker image') {
             steps {
                 script {
-                    sh "docker build -t ${AWS_ECR_REPOSITORY}:${BUILD_NUMBER} ."
+                    sh "docker build -t ${AWS_ECR_REPOSITORY_URL}/${WEB_APP_ECR_REPO_NAME}:${BUILD_NUMBER} ."
                 }
             }
         }
-        stage('Publish image into aws ecr') {
+        stage('Publish web app image into aws ecr') {
             steps {
                 script {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-credentials']]) {
@@ -47,8 +49,31 @@ pipeline {
                         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
                         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                         export AWS_DEFAULT_REGION=us-east-2
-                        aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 654654348225.dkr.ecr.us-east-2.amazonaws.com
-                        docker push ${AWS_ECR_REPOSITORY}:${BUILD_NUMBER}
+                        aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${AWS_ECR_REPOSITORY_URL}"
+                        docker push ${AWS_ECR_REPOSITORY_URL}/${WEB_APP_ECR_REPO_NAME}:${BUILD_NUMBER}
+                  """
+            
+                }
+            }
+        }
+        }
+        stage ('Build mysql docker image') {
+            steps {
+                script {
+                    sh "mysql-db/docker build -t ${AWS_ECR_REPOSITORY_URL}/${MYSQL_ECR_REPO_NAME}:${BUILD_NUMBER} .
+                }
+            }
+        }
+        stage('Publish web app image into aws ecr') {
+            steps {
+                script {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-credentials']]) {
+                  sh """
+                        export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                        export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                        export AWS_DEFAULT_REGION=us-east-2
+                        aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${AWS_ECR_REPOSITORY_URL}
+                        docker push ${AWS_ECR_REPOSITORY_URL}/${MYSQL_ECR_REPO_NAME}:${BUILD_NUMBER}
                   """
             
                 }
