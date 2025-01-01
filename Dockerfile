@@ -10,10 +10,12 @@ RUN apt-get -y install \
 
 WORKDIR /app
 
-COPY . .
+COPY 
 RUN pip install -r requirements.txt --src /usr/local/src
 
-COPY . .
+COPY templates .
+COPY app.py .
+COPY requirements.txt .
 
 EXPOSE 5000
 CMD [ "python", "app.py" ]
