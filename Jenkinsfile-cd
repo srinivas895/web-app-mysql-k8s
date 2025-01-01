@@ -1,36 +1,46 @@
 pipeline {
-  agent any {
+    agent any
     stages {
-      stage ('Verify deployment details') {
-        steps {
-          script {
-          }
+        stage('Verify deployment details') {
+            steps {
+                script {
+                    // You can add deployment verification logic here
+                    println "Verifying deployment details..."
+                }
+            }
         }
-      }
-      stage ('Web app deployment') {
-        steps {
-          script {
-            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-credentials']]) {
-            sh """
-                export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-                export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-                export AWS_DEFAULT_REGION=us-east-2
-                aws eks update-kubeconfig --region us-east-2 --name staging-demo
-                cd k8s/web
-                kubeclt apply -f web-namespace.yml
-                kubeclt apply -f web-namespace.yml
-                kubeclt apply web-deployment.yml
-              """
-          }
+
+        stage('Web app deployment') {
+            steps {
+                script {
+                    // Use AWS credentials to authenticate and configure kubectl for EKS
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'eks-credentials']]) {
+                        sh """
+                            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+                            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+                            export AWS_DEFAULT_REGION=us-east-2
+                            aws eks update-kubeconfig --region us-east-2 --name staging-demo
+
+                            # Change directory to where Kubernetes manifests are located
+                            cd k8s/web
+                            
+                            # Apply Kubernetes manifests
+                            kubectl apply -f web-namespace.yml
+                            kubectl apply -f web-deployment.yml
+                        """
+                    }
+                }
+            }
         }
-      }
-      stage ('db deployment') {
-        steps {
-          script {
-            println("empty db deployment")
-          }
+
+        stage('db deployment') {
+            steps {
+                script {
+                    // Placeholder for DB deployment steps
+                    println "Deploying database..."
+                    // You can add logic to deploy the database here if needed
+                }
+            }
         }
-      }
     }
-  }
-        
+}
