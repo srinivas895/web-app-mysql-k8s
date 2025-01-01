@@ -44,7 +44,7 @@ stage ('Building the web app image') {
 stage ('trivy web image scan') {
   steps {
    script {
-     sh "trivy image -f json -o ${WEB_APP_REPO_NAME}-reports.json ${AWS_ECR_REPOSITORY_URL}/${WEB_APP_REPO_NAME}:${BUILD_NUMBER}
+     sh "trivy image -f json -o ${WEB_APP_REPO_NAME}-reports.json ${AWS_ECR_REPOSITORY_URL}/${WEB_APP_REPO_NAME}:${BUILD_NUMBER}"
      archiveArticats artifacts: "${WEB_APP_REPO_NAME}-reports.json"
     }
    }
@@ -62,7 +62,7 @@ stage ('Building mysql iamge') {
 stage ('trivy web image scan') {
   steps {
    script {
-     sh "trivy image -f json -o ${MYSQL_DB_REPO_NAME}-reports.json ${AWS_ECR_REPOSITORY_URL}/${MYSQL_DB_REPO_NAME}:${BUILD_NUMBER}
+     sh "trivy image -f json -o ${MYSQL_DB_REPO_NAME}-reports.json ${AWS_ECR_REPOSITORY_URL}/${MYSQL_DB_REPO_NAME}:${BUILD_NUMBER}"
      archiveArticats artifacts: "${MYSQL_DB_REPO_NAME}-reports.json"
     }
    }
