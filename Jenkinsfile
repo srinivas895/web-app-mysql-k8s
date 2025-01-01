@@ -55,7 +55,7 @@ pipeline {
             
                 }
             }
-        }
+         }
         }
         stage ('Build mysql docker image') {
             steps {
