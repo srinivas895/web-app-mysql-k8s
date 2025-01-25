@@ -9,7 +9,6 @@ stages {
  stage ('build web app') {
    steps {
      script {
-         sh "python3.9 -m venv myenv"
          sh "source myenv/bin/activate"
          sh "pip install uWSGI==2.0.19.1"
          sh "pip3 install -r requirements.txt"
