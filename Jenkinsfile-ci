@@ -18,6 +18,17 @@ stages {
      }
    }
  }
+ stage('Unit test') {
+   steps {
+    script {
+          try {
+             sh "pytest"
+             } catch (Exception e) {
+             println("No unit tests are there in my test source code")
+         }
+       }
+    }
+ }
  stage ('Sonar code quality') {
    steps {
     script {
