@@ -9,7 +9,8 @@ stages {
  stage ('build web app') {
    steps {
      script {
-         sh "pip3 install -r requirements.txt"
+         sh "python3 --version"
+         sh "echo pip3 install -r requirements.txt"
      }
    }
  }
