@@ -38,7 +38,7 @@ stages {
         }
     }
   }
- }
+}
 stage ('Building the web app image') {
   steps {
     script {
