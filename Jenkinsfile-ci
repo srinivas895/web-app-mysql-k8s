@@ -1,7 +1,5 @@
 pipeline {
- agent {
-   label 'slave1'
- }
+ agent any
  environment {
    AWS_ECR_REPOSITORY_URL = "654654348225.dkr.ecr.us-east-2.amazonaws.com"
    WEB_APP_REPO_NAME = "web-app"
