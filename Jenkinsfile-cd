@@ -8,8 +8,8 @@ pipeline {
           sh """
             export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-            export AWS_DEFAULT_REGION=us-east-2
-            aws eks update-kubeconfig --region us-east-2 --name staging-demo
+            export AWS_DEFAULT_REGION=ap-south-1
+            aws eks update-kubeconfig --region ap-south-1 --name staging-demo
             kubectl apply -f k8s/web/web-namespace.yml
             kubectl apply -f k8s/web/we-deployment.yml
             kubectl apply -f k8s/web/web-service.yml
@@ -26,8 +26,8 @@ pipeline {
           sh """
             export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
-            export AWS_DEFAULT_REGION=us-east-2
-            aws eks update-kubeconfig --region us-east-2 --name staging-demo
+            export AWS_DEFAULT_REGION=ap-south-1
+            aws eks update-kubeconfig --region ap-south-1 --name staging-demo
             kubectl apply -f k8s/db/db-secrets.yml
             kubectl apply -f k8s/db/db-deployment.yml
             kubectl apply -f k8s/db/db-service.yml
